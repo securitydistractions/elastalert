@@ -1,0 +1,47 @@
+
+
+name: MISP High Alert - Pihole v4
+type: any
+index: sd-pihole*
+
+filter:
+ - query:
+         query_string:
+                   query: "misp.tag: Feed-HighAlert"
+
+realert: 
+        minutes: 5
+
+alert:  hivealerter
+
+hive_connection:
+        hive_host: http://192.168.30.5
+        hive_port: 9000
+        hive_apikey: Vi3WqXISouEXsgkxzMXQIXmnFHaGSVhM
+        
+hive_alert_config:
+        title: 'High Alert Indicator of Compromise Found - "{match[destination][domain]}" - "{match[misp][eventinfo][0]}"'
+        type: 'Alert'
+        source: '{match[_index]}'
+        description: >  
+                There has been a lookup to a domain known on our high alert feed via our MISP platform, this is an indication an attacker known to us is operating within our infrastructure. 
+                                
+                                                
+                * **MISP Event:** "{match[misp][eventinfo][0]}", You can check your [Kibana dashboard](http://192.168.8.140:5606/app/kibana#/dashboard/2f6d80f0-c8a7-11e9-9a38-a59bab12b4d2?_a=%28query:%28language:lucene,query:'_id:"{match[_id]}"'%29%29&_g=%28time:%28from:now-3d,mode:quick,to:now%29%29) for more information.
+
+
+                **The full details of this alert are as follows:
+
+
+                * **Hostname:** "{match[source][hostname]}"
+
+
+                * **Destination Domain:** "{match[destination][domain]}"       
+        severity: 3
+        tlp: 3
+        status: 'New'
+        follow: True
+
+hive_observable_data_mapping:
+        - ip: "{match[source][hostname]}"
+        - domain: "{match[destination][domain]}"
